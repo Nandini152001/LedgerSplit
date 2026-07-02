@@ -11,6 +11,7 @@ import com.nandini.splitwiseclone.model.ExpenseGroup;
 import com.nandini.splitwiseclone.model.ExpenseSplit;
 import com.nandini.splitwiseclone.model.User;
 import com.nandini.splitwiseclone.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -44,6 +45,7 @@ public class ExpenseService {
         this.groupMemberRepository = groupMemberRepository;
     }
 
+    @Transactional
     public ExpenseResponseDTO createExpense(Long groupId, ExpenseRequestDTO requestDTO) {
 
 //        Validate SplitType = EQUAL
@@ -89,6 +91,25 @@ public class ExpenseService {
 
         return mapToResponseDTO(savedExpense, splits);
 
+    }
+
+    public List<ExpenseResponseDTO> getExpensesByGroupId(Long groupId){
+
+//        Validate Group Exist
+        ExpenseGroup group = expenseGroupRepository.findById(groupId).orElseThrow(() -> new ExpenseGroupNotFoundException(groupId));
+
+        List<Expense> expenses = expenseRepository.findByExpenseGroup_Id(groupId);
+
+        List<ExpenseResponseDTO> responseDTOs = new ArrayList<>();
+
+        for(Expense expense: expenses){
+            List<ExpenseSplit> splits = expenseSplitRepository.findByExpense_Id(expense.getId());
+
+            ExpenseResponseDTO responseDTO = mapToResponseDTO(expense, splits);
+
+            responseDTOs.add(responseDTO);
+        }
+        return responseDTOs;
     }
 
         private void validateUserIsGroupMember(Long groupId, Long userId){
@@ -143,7 +164,7 @@ public class ExpenseService {
             responseDTO.setAmount(expense.getAmount());
             responseDTO.setSplitType(expense.getSplitType());
             responseDTO.setPaidByUserId(expense.getPaidBy().getId());
-            responseDTO.setCreatedAt(expense.getCreatedAt());
+            responseDTO.setCreatedAt( expense.getCreatedAt());
             responseDTO.setGroupId(expense.getExpenseGroup().getId());
 
             List<ExpenseSplitResponseDTO> splitResponseDTOS = new ArrayList<>();
