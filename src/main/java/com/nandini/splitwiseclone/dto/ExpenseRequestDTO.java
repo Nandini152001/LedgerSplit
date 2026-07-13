@@ -25,8 +25,20 @@ public class ExpenseRequestDTO {
     @NotNull(message = "Split type is required")
     private SplitType splitType;
 
-    @NotEmpty(message = "At least one participant is required")
+//    @NotEmpty(message = "At least one participant is required")
     private List<Long> participantsUserIds;
+
+    private List<ExpenseSplitRequestDTO> splits;
+
+    public List<ExpenseSplitRequestDTO> getSplits() {
+        return splits;
+    }
+
+    public void setSplits(List<ExpenseSplitRequestDTO> splits) {
+        this.splits = splits;
+    }
+
+
 
     public String getDescription() {
         return description;

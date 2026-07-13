@@ -6,6 +6,7 @@ import com.nandini.splitwiseclone.dto.ExpenseSplitResponseDTO;
 import com.nandini.splitwiseclone.enums.SplitType;
 import com.nandini.splitwiseclone.exception.ExpenseGroupNotFoundException;
 import com.nandini.splitwiseclone.exception.UserNotFoundException;
+import com.nandini.splitwiseclone.exception.UserNotMemberOfGroupException;
 import com.nandini.splitwiseclone.model.Expense;
 import com.nandini.splitwiseclone.model.ExpenseGroup;
 import com.nandini.splitwiseclone.model.ExpenseSplit;
@@ -116,7 +117,7 @@ public class ExpenseService {
                 boolean isMember = groupMemberRepository.existsByExpenseGroup_idAndUser_id(groupId, userId);
 
                 if(!isMember) {
-                    throw new RuntimeException("User with Id " + userId + " is not a member of group " + groupId);
+                    throw new UserNotMemberOfGroupException(userId, groupId);
                 }
         }
 
