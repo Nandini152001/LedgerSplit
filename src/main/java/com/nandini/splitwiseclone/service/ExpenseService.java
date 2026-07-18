@@ -12,6 +12,8 @@ import com.nandini.splitwiseclone.model.ExpenseGroup;
 import com.nandini.splitwiseclone.model.ExpenseSplit;
 import com.nandini.splitwiseclone.model.User;
 import com.nandini.splitwiseclone.repository.*;
+import com.nandini.splitwiseclone.service.strategy.SplitStrategy;
+import com.nandini.splitwiseclone.service.strategy.SplitStrategyFactory;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -31,28 +33,25 @@ public class ExpenseService {
     private final ExpenseGroupRepository expenseGroupRepository;
     private final UserRepository userRepository;
     private final GroupMemberRepository groupMemberRepository;
+    private final SplitStrategyFactory splitStrategyFactory;
 
     public ExpenseService(
             ExpenseRepository expenseRepository,
             ExpenseSplitRepository expenseSplitRepository,
             ExpenseGroupRepository expenseGroupRepository,
             UserRepository userRepository,
-            GroupMemberRepository groupMemberRepository
+            GroupMemberRepository groupMemberRepository, SplitStrategyFactory splitStrategyFactory
     ){
         this.expenseRepository = expenseRepository;
         this.expenseSplitRepository = expenseSplitRepository;
         this.expenseGroupRepository = expenseGroupRepository;
         this.userRepository = userRepository;
         this.groupMemberRepository = groupMemberRepository;
+        this.splitStrategyFactory = splitStrategyFactory;
     }
 
     @Transactional
     public ExpenseResponseDTO createExpense(Long groupId, ExpenseRequestDTO requestDTO) {
-
-//        Validate SplitType = EQUAL
-        if (requestDTO.getSplitType() != SplitType.EQUAL) {
-            throw new RuntimeException(("Currently only EQUAL split is supported"));
-        }
 
 //        Validate group exists
         ExpenseGroup group = expenseGroupRepository.findById(groupId).orElseThrow(() -> new ExpenseGroupNotFoundException(groupId));
@@ -86,8 +85,9 @@ public class ExpenseService {
 
         Expense savedExpense = expenseRepository.save(expense);
 
-        List<ExpenseSplit> splits = createEqualSplits(savedExpense, participants, requestDTO.getAmount());
+        SplitStrategy splitStrategy = splitStrategyFactory.getStrategy(requestDTO.getSplitType());
 
+        List<ExpenseSplit> splits = splitStrategy.createSplits(savedExpense, participants, requestDTO.getAmount());
         expenseSplitRepository.saveAll(splits);
 
         return mapToResponseDTO(savedExpense, splits);
@@ -132,28 +132,6 @@ public class ExpenseService {
             if(uniqueIds.size() != participantUserIds.size()){
                 throw new RuntimeException("Duplicate participants are not allowed");
             }
-        }
-
-        private List<ExpenseSplit> createEqualSplits(
-                Expense expense,
-                List<User> participants,
-                BigDecimal totalAmount
-        ){
-            int participantCount = participants.size();
-            List<ExpenseSplit> splits = new ArrayList<>();
-
-            BigDecimal eachShare = totalAmount.divide(BigDecimal.valueOf(participantCount), 2, RoundingMode.DOWN);
-
-            for(User participant: participants){
-                ExpenseSplit split = new ExpenseSplit();
-                split.setExpense(expense);
-                split.setUser(participant);
-                split.setAmountOwed(eachShare);
-
-                splits.add(split);
-            }
-
-            return splits;
         }
 
         private ExpenseResponseDTO mapToResponseDTO(Expense expense, List<ExpenseSplit>splits){

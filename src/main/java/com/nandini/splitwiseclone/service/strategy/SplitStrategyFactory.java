@@ -13,7 +13,7 @@ public class SplitStrategyFactory {
         this.splitStrategies = splitStrategies;
     }
 
-    public SplitStrategy getStategy(SplitType splitType){
+    public SplitStrategy getStrategy(SplitType splitType){
 
         for(SplitStrategy strategy: splitStrategies){
 
