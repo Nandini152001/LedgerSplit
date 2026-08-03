@@ -23,6 +23,8 @@ public class ExpenseSplit {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amountOwed;
 
+//    Getters and Setters ahead...............
+
     public Long getId() {
         return id;
     }

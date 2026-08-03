@@ -1,7 +1,9 @@
 package com.nandini.splitwiseclone.exception;
 
-public class UserNotMemberOfGroupException extends RuntimeException{
+import com.nandini.splitwiseclone.enums.ErrorCode;
+
+public class UserNotMemberOfGroupException extends ForbiddenOperationException{
     public UserNotMemberOfGroupException(Long userId, Long groupId){
-        super("User with userId: " + userId + " is not a member of groupId: " + groupId);
+        super(ErrorCode.USER_NOT_MEMBER_OF_GROUP, ("User with userId: " + userId + " is not a member of groupId: " + groupId));
     }
 }

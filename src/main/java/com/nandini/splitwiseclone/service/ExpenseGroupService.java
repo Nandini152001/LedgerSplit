@@ -2,10 +2,9 @@ package com.nandini.splitwiseclone.service;
 
 import com.nandini.splitwiseclone.dto.ExpenseGroupRequestDTO;
 import com.nandini.splitwiseclone.dto.ExpenseGroupResponseDTO;
-import com.nandini.splitwiseclone.exception.ExpenseGroupNotFoundException;
+import com.nandini.splitwiseclone.exception.GroupNotFoundException;
 import com.nandini.splitwiseclone.model.ExpenseGroup;
 import com.nandini.splitwiseclone.repository.ExpenseGroupRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,12 +41,12 @@ public class ExpenseGroupService {
     }
 
     public ExpenseGroupResponseDTO getGroupById(Long id){
-       ExpenseGroup groupFound = expenseGroupRepository.findById(id).orElseThrow(() -> new ExpenseGroupNotFoundException(id));
+       ExpenseGroup groupFound = expenseGroupRepository.findById(id).orElseThrow(() -> new GroupNotFoundException(id));
        return mapToResponseDTO(groupFound);
     }
 
     public ExpenseGroupResponseDTO updateGroupById(Long id, ExpenseGroupRequestDTO updatedGroupDetails){
-        ExpenseGroup existingExpenseGroup = expenseGroupRepository.findById(id).orElseThrow(() -> new ExpenseGroupNotFoundException(id));
+        ExpenseGroup existingExpenseGroup = expenseGroupRepository.findById(id).orElseThrow(() -> new GroupNotFoundException(id));
 
         existingExpenseGroup.setName(updatedGroupDetails.getName());
         existingExpenseGroup.setDescription(updatedGroupDetails.getDescription());
@@ -62,6 +61,6 @@ public class ExpenseGroupService {
     }
 
     public ExpenseGroup groupEntityById(Long id){
-        return expenseGroupRepository.findById(id).orElseThrow(() -> new ExpenseGroupNotFoundException(id));
+        return expenseGroupRepository.findById(id).orElseThrow(() -> new GroupNotFoundException(id));
     }
 }

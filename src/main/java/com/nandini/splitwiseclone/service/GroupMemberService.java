@@ -3,7 +3,7 @@ package com.nandini.splitwiseclone.service;
 import com.nandini.splitwiseclone.dto.AddGroupMemberRequestDTO;
 import com.nandini.splitwiseclone.dto.GroupMemberResponseDTO;
 import com.nandini.splitwiseclone.enums.GroupRole;
-import com.nandini.splitwiseclone.exception.ExpenseGroupNotFoundException;
+import com.nandini.splitwiseclone.exception.GroupNotFoundException;
 import com.nandini.splitwiseclone.exception.GroupMemberAlreadyExistsException;
 import com.nandini.splitwiseclone.exception.GroupMemberNotFoundException;
 import com.nandini.splitwiseclone.exception.UserNotFoundException;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class GroupMemberService {
@@ -34,7 +33,7 @@ public class GroupMemberService {
 
     public GroupMemberResponseDTO addMemberToGroup(Long groupId, AddGroupMemberRequestDTO userToAdd) {
 
-        ExpenseGroup expenseGroup = expenseGroupRepository.findById(groupId).orElseThrow(() -> new ExpenseGroupNotFoundException(groupId));
+        ExpenseGroup expenseGroup = expenseGroupRepository.findById(groupId).orElseThrow(() -> new GroupNotFoundException(groupId));
 
         User user = userRepository.findById(userToAdd.getUserId()).orElseThrow(() -> new UserNotFoundException(userToAdd.getUserId()));
 
@@ -56,7 +55,7 @@ public class GroupMemberService {
     }
 
     public List<GroupMemberResponseDTO> getAllGroupMembersByGroupId(Long groupId){
-                expenseGroupRepository.findById(groupId).orElseThrow(() -> new ExpenseGroupNotFoundException(groupId));
+                expenseGroupRepository.findById(groupId).orElseThrow(() -> new GroupNotFoundException(groupId));
 
                 return groupMemberRepository.findByExpenseGroup_Id(groupId)
                         .stream()
@@ -66,7 +65,7 @@ public class GroupMemberService {
 
     public void deleteUserByExpenseGroupId(Long groupId, Long userId){
 
-            expenseGroupRepository.findById(groupId).orElseThrow(() -> new ExpenseGroupNotFoundException(groupId));
+            expenseGroupRepository.findById(groupId).orElseThrow(() -> new GroupNotFoundException(groupId));
             userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
             GroupMember groupMember = groupMemberRepository.findByExpenseGroup_idAndUser_Id(groupId, userId).orElseThrow(() -> new GroupMemberNotFoundException(groupId, userId));
 

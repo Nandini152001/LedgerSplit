@@ -1,8 +1,10 @@
 package com.nandini.splitwiseclone.exception;
 
-public class GroupMemberAlreadyExistsException extends RuntimeException{
+import com.nandini.splitwiseclone.enums.ErrorCode;
+
+public class GroupMemberAlreadyExistsException extends ConflictException{
 
     public GroupMemberAlreadyExistsException(Long groupId, Long userId){
-        super("user with id: " + userId + " is already a member of group with group id: " + groupId);
+        super(ErrorCode.GROUP_MEMBER_ALREADY_EXISTS, ("user with id: " + userId + " is already a member of group with group id: " + groupId));
     }
 }

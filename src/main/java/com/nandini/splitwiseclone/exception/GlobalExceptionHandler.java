@@ -3,6 +3,7 @@ package com.nandini.splitwiseclone.exception;
 import com.nandini.splitwiseclone.dto.ErrorResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,67 +17,74 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<String> handleUserNotFound(UserNotFoundException ex){
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
+    @ExceptionHandler(BusinessValidationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleBusinessValidationException(
+            BusinessValidationException ex,
+            HttpServletRequest request) {
+
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex, request);
     }
 
-    @ExceptionHandler(ExpenseGroupNotFoundException.class)
-    public ResponseEntity<String> handleExpenseGroupNotFound(ExpenseGroupNotFoundException ex){
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleResourceNotFoundException(
+            ResourceNotFoundException ex,
+            HttpServletRequest request) {
+
+        return buildErrorResponse(HttpStatus.NOT_FOUND, ex, request);
     }
 
+    @ExceptionHandler(ForbiddenOperationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleForbiddenOperationException(
+            ForbiddenOperationException ex,
+            HttpServletRequest request) {
+
+        return buildErrorResponse(HttpStatus.FORBIDDEN, ex, request);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponseDTO> handleConflictException(
+            ConflictException ex,
+            HttpServletRequest request) {
+
+        return buildErrorResponse(HttpStatus.CONFLICT, ex, request);
+    }
+
+    /**
+     * Bean Validation Exceptions
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleMethodArgumentNotValidErrors(MethodArgumentNotValidException ex){
+    public ResponseEntity<Map<String, String>> handleValidationException(
+            MethodArgumentNotValidException ex) {
 
         Map<String, String> errors = new HashMap<>();
 
-        for(FieldError fieldError : ex.getBindingResult().getFieldErrors()){
+        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
             errors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+        return ResponseEntity
+                .badRequest()
+                .body(errors);
     }
 
-    @ExceptionHandler(GroupMemberAlreadyExistsException.class)
-    public ResponseEntity<String> handleGroupMemberAlreadyExist(GroupMemberAlreadyExistsException ex){
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(UserNotMemberOfGroupException.class)
-    public ResponseEntity<ErrorResponseDTO> handleUserNotMemberOfGroup(UserNotMemberOfGroupException ex, HttpServletRequest request){
+    /**
+     * Helper method
+     */
+    private ResponseEntity<ErrorResponseDTO> buildErrorResponse(
+            HttpStatusCode status,
+            SplitwiseException ex,
+            HttpServletRequest request) {
 
         ErrorResponseDTO errorResponse = new ErrorResponseDTO(
                 LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(),
-                "USER_NOT_MEMBER_OF_GROUP",
+                status.value(),
+                ex.getErrorCode().name(),   // if DTO stores String
                 ex.getMessage(),
                 request.getRequestURI()
         );
 
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(status)
                 .body(errorResponse);
     }
-
-    @ExceptionHandler(InvalidExpenseSplitException.class)
-    public ResponseEntity<ErrorResponseDTO> handleInvalidExpenseSplit(InvalidExpenseSplitException ex, HttpServletRequest request){
-        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
-                LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(),
-                "INVALID_EXPENSE_SPLIT",
-                ex.getMessage(),
-                request.getRequestURI()
-        );
-                return ResponseEntity
-                        .status(HttpStatus.BAD_REQUEST)
-                        .body(errorResponse);
-    }
-
 }

@@ -1,5 +1,6 @@
 package com.nandini.splitwiseclone.service.strategy;
 
+import com.nandini.splitwiseclone.dto.ExpenseRequestDTO;
 import com.nandini.splitwiseclone.enums.SplitType;
 import com.nandini.splitwiseclone.model.Expense;
 import com.nandini.splitwiseclone.model.ExpenseSplit;
@@ -20,11 +21,14 @@ public class EqualSplitStrategy implements SplitStrategy{
     }
 
     @Override
-    public List<ExpenseSplit> createSplits(Expense expense, List<User> participants, BigDecimal totalAmount) {
+    public List<ExpenseSplit> createSplits(Expense expense, ExpenseRequestDTO requestDTO, List<User> participants) {
+
         int participantCount = participants.size();
         List<ExpenseSplit> splits = new ArrayList<>();
 
-        BigDecimal eachShare = totalAmount.divide(BigDecimal.valueOf(participantCount), 2, RoundingMode.DOWN);
+        expense.setAmount(requestDTO.getAmount());
+
+        BigDecimal eachShare = expense.getAmount().divide(BigDecimal.valueOf(participantCount), 2, RoundingMode.DOWN);
 
         for(User participant: participants){
             ExpenseSplit split = new ExpenseSplit();

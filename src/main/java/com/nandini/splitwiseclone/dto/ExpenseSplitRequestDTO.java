@@ -10,8 +10,9 @@ public record ExpenseSplitRequestDTO (
         @NotNull(message = "User id is requied")
         Long userId,
 
-        @NotNull(message = "Amount owed is required")
+//        @NotNull(message = "Amount owed is required")
         @Positive(message = "Amount owed must be greater than zero")
-        BigDecimal amountOwed
-){
-}
+        BigDecimal amountOwed,
+
+        BigDecimal percentage
+){}

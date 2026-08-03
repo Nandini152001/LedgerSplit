@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface GroupMemberRepository extends JpaRepository<GroupMember, Long> {
 
@@ -18,5 +17,5 @@ public interface GroupMemberRepository extends JpaRepository<GroupMember, Long> 
             JOIN FETCH gm.user WHERE gm.expenseGroup.id = :groupId""")
     List<GroupMember> findByExpenseGroup_Id(Long groupId);
 
-    Optional<GroupMember> findByExpenseGroup_idAndUser_Id(Long GroupId, Long UserId);
+     boolean existsByExpenseGroup_idAndUser_Id(Long GroupId, Long UserId);
 }

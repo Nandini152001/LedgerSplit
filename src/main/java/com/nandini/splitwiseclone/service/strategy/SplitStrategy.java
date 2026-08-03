@@ -1,5 +1,6 @@
 package com.nandini.splitwiseclone.service.strategy;
 
+import com.nandini.splitwiseclone.dto.ExpenseRequestDTO;
 import com.nandini.splitwiseclone.enums.SplitType;
 import com.nandini.splitwiseclone.model.Expense;
 import com.nandini.splitwiseclone.model.ExpenseSplit;
@@ -14,7 +15,7 @@ public interface SplitStrategy {
 
     List<ExpenseSplit> createSplits(
             Expense expense,
-            List<User> participants,
-            BigDecimal totalAmount
+            ExpenseRequestDTO requestDTO,
+            List<User> participants
     );
 }
