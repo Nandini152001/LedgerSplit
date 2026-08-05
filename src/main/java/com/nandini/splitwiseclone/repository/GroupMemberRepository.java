@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface GroupMemberRepository extends JpaRepository<GroupMember, Long> {
 
@@ -18,4 +19,5 @@ public interface GroupMemberRepository extends JpaRepository<GroupMember, Long> 
     List<GroupMember> findByExpenseGroup_Id(Long groupId);
 
      boolean existsByExpenseGroup_idAndUser_Id(Long GroupId, Long UserId);
+     Optional<GroupMember> findByExpenseGroup_idAndUser_Id(Long GroupId, Long UserId);
 }
