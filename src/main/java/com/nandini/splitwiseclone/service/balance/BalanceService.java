@@ -3,11 +3,11 @@ import com.nandini.splitwiseclone.dto.BalanceResponseDTO;
 import com.nandini.splitwiseclone.model.ExpenseSplit;
 import com.nandini.splitwiseclone.model.User;
 import com.nandini.splitwiseclone.repository.ExpenseSplitRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
-
+@Slf4j
 @Service
 public class BalanceService {
 
@@ -20,6 +20,8 @@ public class BalanceService {
     }
 
     public List<BalanceResponseDTO> calculateGroupBalances(Long groupId) {
+
+        log.info("Calculating balances for groupId={}" + groupId);
 
         List<ExpenseSplit> splits = expenseSplitRepository.findByExpense_ExpenseGroup_Id(groupId);
         Map<Long, BalanceData> balances = new HashMap<>();

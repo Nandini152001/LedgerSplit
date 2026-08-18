@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 
 public record SettlementResponseDTO (
          Long fromUserId,
-         Long fromUserName,
+         String fromUserName,
          Long toUserId,
-         Long toUserName,
+         String toUserName,
          BigDecimal amountPaid
 ){
 }
