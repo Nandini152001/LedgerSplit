@@ -1,0 +1,26 @@
+package com.nandini.ledgersplit.enums;
+
+public enum ErrorCode {
+    // User
+    USER_NOT_FOUND,
+    USER_NOT_MEMBER_OF_GROUP,
+
+    // Group
+    GROUP_NOT_FOUND,
+    GROUP_MEMBER_NOT_FOUND,
+    GROUP_MEMBER_ALREADY_EXISTS,
+
+    // Expense
+    INVALID_SPLIT_AMOUNT,
+    INVALID_SPLIT_COUNT,
+    INVALID_PERCENTAGE,
+    INVALID_EXPENSE_SPLIT,
+
+    // Business Rules
+    DUPLICATE_PARTICIPANT,
+    FORBIDDEN_OPERATION,
+
+    // Generic
+    BUSINESS_VALIDATION_FAILED,
+    RESOURCE_NOT_FOUND
+}
