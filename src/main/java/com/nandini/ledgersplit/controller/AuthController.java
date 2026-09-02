@@ -1,5 +1,7 @@
 package com.nandini.ledgersplit.controller;
 
+import com.nandini.ledgersplit.dto.LoginRequestDTO;
+import com.nandini.ledgersplit.dto.LoginResponseDTO;
 import com.nandini.ledgersplit.dto.RegistrationRequestDTO;
 import com.nandini.ledgersplit.model.User;
 import com.nandini.ledgersplit.service.AuthService;
@@ -24,5 +26,10 @@ public class AuthController {
     public ResponseEntity<User> register(@RequestBody RegistrationRequestDTO requestDTO){
         User user = authService.register(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    }
+
+    @PostMapping("/login")
+    public LoginResponseDTO login(@RequestBody LoginRequestDTO request){
+        return authService.logIn(request);
     }
 }
