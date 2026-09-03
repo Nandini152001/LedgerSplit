@@ -13,6 +13,8 @@ import com.nandini.ledgersplit.service.strategy.SplitStrategy;
 import com.nandini.ledgersplit.service.strategy.SplitStrategyFactory;
 import com.nandini.ledgersplit.service.validator.ExpenseValidationService;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,6 +24,9 @@ import java.util.List;
 @Service
 public class ExpenseService {
 
+//    SLF4J Implementation
+    private static final Logger log = LoggerFactory.getLogger(ExpenseService.class);
+//    -----------------------------------------
     private final ExpenseRepository expenseRepository;
     private final ExpenseSplitRepository expenseSplitRepository;
     private final SplitStrategyFactory splitStrategyFactory;
@@ -88,6 +93,14 @@ public class ExpenseService {
 
         expenseSplitRepository.saveAll(splits);
 
+        //        Logger - Logging information
+        log.info(
+                "Creating expense for groupId={}, amount={}, splitType={}",
+                groupId,
+                requestDTO.getAmount(),
+                requestDTO.getSplitType()
+        );
+
         return expenseMapper.toResponseDTO(savedExpense, splits);
     }
 
@@ -110,6 +123,7 @@ public class ExpenseService {
                     expenseMapper.toResponseDTO(expense, splits)
             );
         }
+
 
         return responseDTOs;
     }
