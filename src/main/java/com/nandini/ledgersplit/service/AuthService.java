@@ -8,6 +8,10 @@ import com.nandini.ledgersplit.repository.UserRepository;
 import com.nandini.ledgersplit.security.JWTService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Service
 public class AuthService {
