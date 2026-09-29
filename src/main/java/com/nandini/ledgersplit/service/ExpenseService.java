@@ -51,6 +51,14 @@ public class ExpenseService {
     public ExpenseResponseDTO createExpense(Long groupId,
                                             ExpenseRequestDTO requestDTO) {
 
+//SLF4J Logger for starting creating an expense
+        log.info(
+                "Creating expense for groupId={}, amount={}, splitType={}",
+                groupId,
+                requestDTO.getAmount(),
+                requestDTO.getSplitType()
+        );
+
         // Validate group
         ExpenseGroup group =
                 expenseValidationService.validateAndGetGroup(groupId);
@@ -95,10 +103,9 @@ public class ExpenseService {
 
         //        Logger - Logging information
         log.info(
-                "Creating expense for groupId={}, amount={}, splitType={}",
-                groupId,
-                requestDTO.getAmount(),
-                requestDTO.getSplitType()
+                "Expense created successfully: expenseId={}, groupId={}",
+                savedExpense.getId(),
+                groupId
         );
 
         return expenseMapper.toResponseDTO(savedExpense, splits);

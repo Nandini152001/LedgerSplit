@@ -42,7 +42,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader("Authorization");
 
-        log.info("Authorization Header: {}", authHeader);
+        log.info("Authorization Header: {}", authHeader!= null);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             log.warn("No Bearer token found. Request will be unauthenticated.");
@@ -75,7 +75,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e) {
-            // invalid/expired/malformed token — leave request unauthenticated
+            log.warn("JWT validation failed: {}", e.getMessage());
+
         }
 
 
