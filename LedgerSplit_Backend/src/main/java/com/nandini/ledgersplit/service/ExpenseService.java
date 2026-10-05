@@ -2,6 +2,7 @@ package com.nandini.ledgersplit.service;
 
 import com.nandini.ledgersplit.dto.ExpenseRequestDTO;
 import com.nandini.ledgersplit.dto.ExpenseResponseDTO;
+import com.nandini.ledgersplit.kafka.ExpenseEventPublisher;
 import com.nandini.ledgersplit.model.Expense;
 import com.nandini.ledgersplit.model.ExpenseGroup;
 import com.nandini.ledgersplit.model.ExpenseSplit;
@@ -32,19 +33,21 @@ public class ExpenseService {
     private final SplitStrategyFactory splitStrategyFactory;
     private final ExpenseValidationService expenseValidationService;
     private final ExpenseMapper expenseMapper;
+    public final ExpenseEventPublisher expenseEventPublisher;
 
     public ExpenseService(
             ExpenseRepository expenseRepository,
             ExpenseSplitRepository expenseSplitRepository,
             SplitStrategyFactory splitStrategyFactory,
             ExpenseValidationService expenseValidationService,
-            ExpenseMapper expenseMapper) {
+            ExpenseMapper expenseMapper, ExpenseEventPublisher expenseEventPublisher) {
 
         this.expenseRepository = expenseRepository;
         this.expenseSplitRepository = expenseSplitRepository;
         this.splitStrategyFactory = splitStrategyFactory;
         this.expenseValidationService = expenseValidationService;
         this.expenseMapper = expenseMapper;
+        this.expenseEventPublisher = expenseEventPublisher;
     }
 
     @Transactional
@@ -88,6 +91,11 @@ public class ExpenseService {
         expense.setCreatedAt(LocalDateTime.now());
 
         Expense savedExpense = expenseRepository.save(expense);
+
+        expenseEventPublisher.publishExpenseCreated(
+                savedExpense.getExpenseGroup().getId(),
+                savedExpense.getId()
+        );
 
         // Create Splits
         SplitStrategy splitStrategy =
