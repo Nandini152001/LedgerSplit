@@ -21,7 +21,7 @@ public class BalanceService {
 
     public List<BalanceResponseDTO> calculateGroupBalances(Long groupId) {
 
-        log.info("Calculating balances for groupId={}" + groupId);
+        log.info("Calculating balances for groupId={}", groupId);
 
         List<ExpenseSplit> splits = expenseSplitRepository.findByExpense_ExpenseGroup_Id(groupId);
         Map<Long, BalanceData> balances = new HashMap<>();
